@@ -6,9 +6,10 @@ services:
     container_name: mysql-2048
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: bishant
+      # These values come from your .env file — DO NOT hardcode secrets here
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_ROOT_HOST: "%"
-      MYSQL_DATABASE: game2048
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     volumes:
       - mysql-data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
@@ -25,16 +26,15 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "8080:80"
+      - "8080:80"  # Access app at http://localhost:8080
     volumes:
       - .:/var/www/html
-
-      environment:
-  DB_HOST: ${DB_HOST}
-  DB_USER: ${DB_USER}
-  DB_PASSWORD: ${DB_PASSWORD}
-  DB_NAME: ${DB_NAME}
-
+    environment:
+      # These are used by your PHP app via getenv() in config.php
+      DB_HOST: ${DB_HOST}         # Usually 'db' (matches service name)
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
 
 volumes:
   mysql-data:
