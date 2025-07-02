@@ -56,7 +56,7 @@ A modern, web-based implementation of the classic 2048 puzzle game, featuring us
 ### Running with Docker
 1. Clone the repository:
    ```sh
-   git clone <repo-url>
+   git clone https://github.com/Wachaa/2048Game.git
    cd 2048
    ```
 2. Build and start the containers:
