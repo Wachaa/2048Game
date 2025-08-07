@@ -153,6 +153,90 @@ document.addEventListener("keyup", (e) => {
   }
 });
 
+
+
+// swipe fucntion
+
+let touchStartX = 0;
+let touchStartY = 0;
+let touchEndX = 0;
+let touchEndY = 0;
+const minSwipeDistance = 30;
+
+document.addEventListener("touchstart", (e) => {
+  const touch = e.changedTouches[0];
+  touchStartX = touch.screenX;
+  touchStartY = touch.screenY;
+});
+
+document.addEventListener("touchend", (e) => {
+  if (!gameStarted) return;
+
+  const touch = e.changedTouches[0];
+  touchEndX = touch.screenX;
+  touchEndY = touch.screenY;
+
+  handleSwipe();
+});
+
+function handleSwipe() {
+  const deltaX = touchEndX - touchStartX;
+  const deltaY = touchEndY - touchStartY;
+
+  if (Math.abs(deltaX) < minSwipeDistance && Math.abs(deltaY) < minSwipeDistance) {
+    return; // Ignore small movements
+  }
+
+  let moved = false;
+
+  if (Math.abs(deltaX) > Math.abs(deltaY)) {
+    // Horizontal swipe
+    if (deltaX > 0) {
+      moved = slideRight();
+    } else {
+      moved = slideLeft();
+    }
+  } else {
+    // Vertical swipe
+    if (deltaY > 0) {
+      moved = slideDown();
+    } else {
+      moved = slideUp();
+    }
+  }
+
+  if (!moved) return;
+
+  setTwo();
+  updateBoardView();
+
+  document.getElementById("score").innerText = score;
+  updateHighScore(score);
+
+  // Prevent pull-to-refresh on mobile inside the game board
+const gameContainer = document.getElementById("board");
+
+let pullStartY = 0;
+
+gameContainer.addEventListener("touchstart", (e) => {
+  pullStartY = e.touches[0].clientY;
+}, { passive: false });
+
+gameContainer.addEventListener("touchmove", (e) => {
+  const currentY = e.touches[0].clientY;
+  if (currentY > pullStartY) {
+    // User swiping down — prevent default pull-to-refresh
+    e.preventDefault();
+  }
+}, { passive: false });
+
+
+  if (isGameOver()) {
+    showGameOver();
+  }
+}
+
+
 // 🧹 Helper: remove zeroes
 function filterZero(row) {
   return row.filter((num) => num !== 0);
